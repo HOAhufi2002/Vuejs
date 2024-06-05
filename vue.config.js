@@ -11,14 +11,15 @@ module.exports = {
       },
     },
   },
-};
-module.exports = {
   devServer: {
-    host: '192.168.1.117',
-    port: 8081,
-    hot: true,
-    client: {
-      webSocketURL: 'ws://192.168.1.117:8081/ws',
+    proxy: {
+      '/assets': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/assets': 'D:/vuejsdemo/mydemo/src/assets/',
+        },
+      },
     },
   },
 };

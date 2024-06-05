@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import AboutView from '../views/AboutView.vue';
 import ProductListView from '../views/ProductListView.vue';
 import TinTucView from '../views/TinTucView.vue'; // Corrected import statement
+import SanPhamView from '../views/SanPhamView.vue'; // Corrected import statement
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/TinTucView',
     name: 'TinTucView',
     component: TinTucView,
+  },
+  {
+    path: '/SanPhamView',
+    name: 'SanPhamView',
+    component: SanPhamView,
   },
 ];
 

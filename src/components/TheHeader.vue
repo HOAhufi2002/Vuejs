@@ -10,8 +10,15 @@
           <li><router-link to="/about">About</router-link></li>
           <li><router-link to="/products">Sản Phẩm</router-link></li>
           <li><router-link to="/TinTucView">Tin Tức</router-link></li>
+          <li><router-link to="/SanPhamView">Product</router-link></li>
         </ul>
       </nav>
+      <div class="cart-container">
+        <router-link to="/cart" class="cart-icon">
+          <img height="30px" src="@/assets/carticon.png" alt="Cart" />
+          <span class="cart-count">{{ cartCount }}</span>
+        </router-link>
+      </div>
     </div>
   </header>
   <br />
@@ -20,12 +27,22 @@
 <script>
 export default {
   name: 'TheHeader',
+  data() {
+    return {
+      cartCount: 0,
+    };
+  },
+  methods: {
+    updateCartCount(newCount) {
+      this.cartCount = newCount;
+    },
+  },
 };
 </script>
 
 <style scoped>
 header {
-  background: linear-gradient(90deg, #333, #555);
+  background: linear-gradient(90deg, #333, green);
   color: #fff;
   padding: 1rem 2rem;
   text-align: center;
@@ -74,6 +91,33 @@ nav a {
 nav a:hover {
   color: #ffd700;
   border-bottom: 2px solid #ffd700;
+}
+
+.cart-container {
+  display: flex;
+  align-items: center;
+}
+
+.cart-icon {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.cart-icon img {
+  display: block;
+}
+
+.cart-count {
+  background-color: #ffd700;
+  color: #333;
+  border-radius: 50%;
+  padding: 0.2rem 0.5rem;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {

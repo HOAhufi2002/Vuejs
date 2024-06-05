@@ -1,26 +1,25 @@
 <template>
-  <center>
-    <h1>{{ message }}</h1>
-  </center>
+  <div style="background-color: yellowgreen">
+    <center>
+      <h1 style="color: white">{{ message }}</h1>
+    </center>
+  </div>
 
   <div class="search-bar">
-    <!-- Input field for search keyword with v-model modifier -->
     <input type="text" v-model.trim="searchQuery" placeholder="Search for products..." />
   </div>
 
   <transition-group name="list" tag="div" class="product-page">
-    <div v-for="(product, index) in filteredProducts" :key="index" class="card-column">
-      <div
-        ref="cards"
-        class="card"
-        @mouseenter="zoomIn"
-        @mouseleave="zoomOut"
-        :style="productStyles(product)"
-      >
+    <div v-for="(product, index) in filteredProducts" :key="index" class="card-column" ref="cards">
+      <div class="card" @mouseenter="zoomIn" @mouseleave="zoomOut" :style="productStyles(product)">
         <div class="image-container">
-          <!-- Add hot label for iPhone 12 -->
           <div v-if="product.name.includes('iPhone 12')" class="hot-label">Hot</div>
-          <img :src="product.image" :alt="product.name" class="product-image" />
+          <img
+            :src="`/images/${product.image}`"
+            :alt="product.name"
+            class="product-image"
+            ref="productImages"
+          />
         </div>
         <div class="container">
           <h4>
@@ -30,15 +29,14 @@
           <p class="description" v-html="product.description"></p>
           <center>
             <div class="buttons">
-              <!-- Listening to the click event for buyNow method -->
               <button @click="buyNow(product)">Mua ngay</button>
-              <!-- Listening to the click event for addToCart method -->
               <button @click="addToCart(product)">Thêm vào giỏ hàng</button>
             </div>
           </center>
         </div>
       </div>
     </div>
+
     <div v-if="showNotification" class="notification">
       <h2 class="notification-title">Purchase Confirmation</h2>
       <p class="notification-text">
@@ -73,60 +71,26 @@
 
 <script>
 import { gsap } from 'gsap';
-import iphone12mini from '@/assets/iphone12mini.jpg';
-import iphone12 from '@/assets/iphone12.jpg';
-import iphone13mini from '@/assets/iphone12mini.jpg';
-import iphone14pro from '@/assets/iphone14promax.jpg';
+import { fetchDataMixin } from '@/mixins/fetchDataMixin';
 
 export default {
   name: 'ProductPage',
+  mixins: [fetchDataMixin],
   data() {
     return {
       message: 'List of iPhones',
       searchQuery: '',
       cart: [],
-      products: [
-        {
-          name: 'iPhone 12 Mini',
-          price: 699,
-          description:
-            'Compact and powerful, featuring <strong>A14 Bionic chip</strong> and dual-camera system.',
-          image: iphone12mini,
-          onSale: true,
-        },
-        {
-          name: 'iPhone 12',
-          price: 799,
-          description:
-            'Powerful performance with <strong>A14 Bionic chip</strong> and Super Retina XDR display.',
-          image: iphone12,
-          onSale: false,
-        },
-        {
-          name: 'iPhone 13 Mini',
-          price: 699,
-          description:
-            'Compact and powerful, featuring <strong>A15 Bionic chip</strong> and dual-camera system.',
-          image: iphone13mini,
-          onSale: false,
-        },
-        {
-          name: 'iPhone 14 Pro',
-          price: 999,
-          description: 'Pro camera system with <strong>LiDAR scanner</strong> and A16 Bionic chip.',
-          image: iphone14pro,
-          onSale: false,
-        },
-      ],
       showNotification: false,
       purchasedProductName: '',
       customerName: '',
       customerPhone: '',
+      apiURL: 'https://localhost:44336/api/sanpham',
     };
   },
   computed: {
     filteredProducts() {
-      return this.products.filter((product) => {
+      return this.items.filter((product) => {
         return product.name.toLowerCase().includes(this.searchQuery.toLowerCase());
       });
     },
@@ -137,31 +101,24 @@ export default {
   watch: {
     searchQuery(newQuery, oldQuery) {
       console.log(`Search query changed from "${oldQuery}" to "${newQuery}"`);
-      // Perform any additional actions when searchQuery changes
     },
   },
   methods: {
-    // Method to handle the buy now action
     buyNow(product) {
       console.log(`Buying ${product.name}`);
-      // Show the notification with product name
       this.purchasedProductName = product.name;
       this.showNotification = true;
       this.cart.push(product);
     },
-    // Method to handle adding product to cart
     addToCart(product) {
       console.log(`Adding ${product.name} to cart`);
-      // Implement the add to cart functionality
       this.cart.push(product);
     },
-    // Method to close the notification
     closeNotification() {
       this.showNotification = false;
       this.customerName = '';
       this.customerPhone = '';
     },
-    // Method to confirm the purchase
     confirmPurchase() {
       if (this.customerName && this.customerPhone) {
         alert(
@@ -172,7 +129,6 @@ export default {
         alert('Please enter your name and phone number.');
       }
     },
-    // Method to determine styles dynamically based on product properties
     productStyles(product) {
       return {
         borderColor: product.onSale ? 'red' : 'black',
@@ -180,24 +136,22 @@ export default {
         borderStyle: 'solid',
       };
     },
-    // Method to zoom in the product card
     zoomIn(event) {
       if (!this.showNotification) {
         gsap.to(event.currentTarget, { scale: 1.1, duration: 0.3 });
       }
     },
-    // Method to zoom out the product card
     zoomOut(event) {
       if (!this.showNotification) {
         gsap.to(event.currentTarget, { scale: 1, duration: 0.3 });
       }
     },
-    // Method to animate products on load
     animateProducts() {
-      if (!this.showNotification) {
-        this.$nextTick(() => {
+      this.$nextTick(() => {
+        const cards = this.$refs.cards;
+        if (cards) {
           gsap.fromTo(
-            this.$refs.cards,
+            cards,
             { y: 50, opacity: 0 },
             {
               y: 0,
@@ -207,15 +161,35 @@ export default {
               ease: 'power2.out',
             },
           );
-        });
-      }
+        }
+      });
+    },
+    animateImages() {
+      this.$nextTick(() => {
+        const productImages = this.$refs.productImages;
+        if (productImages) {
+          gsap.fromTo(
+            productImages,
+            { opacity: 0, y: 50 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              stagger: 0.3,
+              ease: 'power2.out',
+            },
+          );
+        }
+      });
     },
   },
   mounted() {
     this.animateProducts();
+    this.animateImages();
   },
   updated() {
     this.animateProducts();
+    this.animateImages();
   },
 };
 </script>
