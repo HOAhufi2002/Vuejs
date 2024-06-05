@@ -8,7 +8,8 @@
         <ul>
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/about">About</router-link></li>
-          <li><router-link to="/products">product</router-link></li>
+          <li><router-link to="/products">Sản Phẩm</router-link></li>
+          <li><router-link to="/TinTucView">Tin Tức</router-link></li>
         </ul>
       </nav>
     </div>
@@ -24,16 +25,17 @@ export default {
 
 <style scoped>
 header {
-  background-color: #333;
+  background: linear-gradient(90deg, #333, #555);
   color: #fff;
-  padding: 1rem;
+  padding: 1rem 2rem;
   text-align: center;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000; /* Đảm bảo header hiển thị trên các phần khác */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ nhẹ */
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 30px;
 }
 
 .container {
@@ -59,16 +61,33 @@ nav ul {
 }
 
 nav li {
-  margin-right: 1rem;
+  margin-right: 2rem;
 }
 
 nav a {
   color: #fff;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+  padding-bottom: 5px;
 }
 
 nav a:hover {
-  color: #ffd700; /* Màu khi hover, bạn có thể thay đổi */
+  color: #ffd700;
+  border-bottom: 2px solid #ffd700;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav li {
+    margin: 0.5rem 0;
+  }
 }
 </style>

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import AboutView from '../views/AboutView.vue';
 import ProductListView from '../views/ProductListView.vue';
+import TinTucView from '../views/TinTucView.vue'; // Corrected import statement
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: '/products',
     name: 'ProductList',
     component: ProductListView,
+  },
+  {
+    path: '/TinTucView',
+    name: 'TinTucView',
+    component: TinTucView,
   },
 ];
 
