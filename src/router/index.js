@@ -2,34 +2,40 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import AboutView from '../views/AboutView.vue';
 import ProductListView from '../views/ProductListView.vue';
-import TinTucView from '../views/TinTucView.vue'; // Corrected import statement
-import SanPhamView from '../views/SanPhamView.vue'; // Corrected import statement
+import TinTucView from '../views/TinTucView.vue';
+import SanPhamView from '../views/SanPhamView.vue';
+import CartView from '../views/CartView.vue';
 
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: HomeView,
   },
   {
     path: '/about',
-    name: 'about',
+    name: 'About',
     component: AboutView,
   },
   {
     path: '/products',
-    name: 'ProductList',
+    name: 'Products',
     component: ProductListView,
   },
   {
-    path: '/TinTucView',
-    name: 'TinTucView',
+    path: '/tintuc',
+    name: 'TinTuc',
     component: TinTucView,
   },
   {
-    path: '/SanPhamView',
-    name: 'SanPhamView',
+    path: '/sanpham',
+    name: 'SanPham',
     component: SanPhamView,
+  },
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: CartView,
   },
 ];
 

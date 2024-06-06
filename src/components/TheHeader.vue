@@ -9,8 +9,8 @@
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/about">About</router-link></li>
           <li><router-link to="/products">Sản Phẩm</router-link></li>
-          <li><router-link to="/TinTucView">Tin Tức</router-link></li>
-          <li><router-link to="/SanPhamView">Product</router-link></li>
+          <li><router-link to="/tintuc">Tin Tức</router-link></li>
+          <li><router-link to="/sanpham">Product</router-link></li>
         </ul>
       </nav>
       <div class="cart-container">
@@ -25,16 +25,13 @@
 </template>
 
 <script>
+import { cartStore } from '../cartStore';
+
 export default {
   name: 'TheHeader',
-  data() {
-    return {
-      cartCount: 0,
-    };
-  },
-  methods: {
-    updateCartCount(newCount) {
-      this.cartCount = newCount;
+  computed: {
+    cartCount() {
+      return cartStore.cartCount;
     },
   },
 };

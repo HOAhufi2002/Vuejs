@@ -77,6 +77,7 @@ import iphone12mini from '@/assets/iphone12mini.jpg';
 import iphone12 from '@/assets/iphone12.jpg';
 import iphone13mini from '@/assets/iphone12mini.jpg';
 import iphone14pro from '@/assets/iphone14promax.jpg';
+import { cartStore } from '../cartStore';
 
 export default {
   name: 'ProductPage',
@@ -137,7 +138,6 @@ export default {
   watch: {
     searchQuery(newQuery, oldQuery) {
       console.log(`Search query changed from "${oldQuery}" to "${newQuery}"`);
-      // Perform any additional actions when searchQuery changes
     },
   },
   methods: {
@@ -151,9 +151,9 @@ export default {
     },
     // Method to handle adding product to cart
     addToCart(product) {
-      console.log(`Adding ${product.name} to cart`);
-      // Implement the add to cart functionality
-      this.cart.push(product);
+      console.log('Adding product to cart:', product);
+
+      cartStore.addToCart(product);
     },
     // Method to close the notification
     closeNotification() {
