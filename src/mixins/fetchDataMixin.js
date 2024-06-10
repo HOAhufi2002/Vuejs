@@ -45,6 +45,7 @@ export const fetchDataMixin = {
           onSale: false,
         };
         this.showAddProductModal = false;
+
         this.successMessage = 'Product added successfully!';
         this.showSuccessMessage = true;
         this.$nextTick(() => {
@@ -52,12 +53,14 @@ export const fetchDataMixin = {
             this.showSuccessMessage = false;
           }, 3000);
         });
+        alert('Product updated successfully!');
       } catch (err) {
         this.error = err;
       } finally {
         this.loading = false;
       }
     },
+
     async deleteItem(url, id) {
       this.loading = true;
       try {
@@ -70,26 +73,16 @@ export const fetchDataMixin = {
       }
     },
     async updateItem(url) {
-      this.loading = true;
       try {
-        console.log('Updating item:', this.editItem); // Debugging line
-        const response = await axios.put(`${url}/update/${this.editItem.id}`, this.editItem);
-        console.log('Server response:', response); // Debugging line
+        console.log('Updating item:', this.editItem); // Kiểm tra dữ liệu đang được gửi
+        const response = await axios.put(`${url}/update${this.editItem.id}`, this.editItem);
+        console.log('Server response:', response.data); // Xem phản hồi từ server
         await this.fetchData(url);
         this.editItem = null;
         this.showEditProductModal = false;
-        this.successMessage = 'Product updated successfully!';
-        this.showSuccessMessage = true;
-        this.$nextTick(() => {
-          setTimeout(() => {
-            this.showSuccessMessage = false;
-          }, 3000);
-        });
+        alert('Product updated successfully!');
       } catch (err) {
-        this.error = err;
-        console.error('Update failed:', err); // Debugging line
-      } finally {
-        this.loading = false;
+        console.error('Update failed:', err); // Log lỗi nếu có
       }
     },
   },

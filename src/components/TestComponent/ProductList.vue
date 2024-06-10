@@ -77,7 +77,7 @@ import iphone12mini from '@/assets/iphone12mini.jpg';
 import iphone12 from '@/assets/iphone12.jpg';
 import iphone13mini from '@/assets/iphone12mini.jpg';
 import iphone14pro from '@/assets/iphone14promax.jpg';
-import { cartStore } from '../cartStore';
+import { cartStore } from '../../cartStore';
 
 export default {
   name: 'ProductPage',

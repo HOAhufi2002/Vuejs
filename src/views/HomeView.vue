@@ -12,7 +12,7 @@
 
 <script>
 import AboutView from './AboutView.vue';
-import AlertComponent from '../components/AlertComponent.vue';
+import AlertComponent from '../components/TestComponent/AlertComponent.vue';
 
 export default {
   components: {
