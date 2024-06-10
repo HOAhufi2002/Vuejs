@@ -1,4 +1,8 @@
 <template>
+  <br />
+  <br />
+  <br />
+
   <footer>
     <div class="container">
       <p>&copy; 2024 YourCompany. All rights reserved.</p>
@@ -14,7 +18,7 @@ export default {
 
 <style scoped>
 footer {
-  background-color: black;
+  background: linear-gradient(90deg, #333, green);
   color: white;
   padding: 1rem;
   text-align: center;

@@ -13,11 +13,17 @@
           <li><router-link to="/sanpham">Product</router-link></li>
         </ul>
       </nav>
-      <div class="cart-container">
-        <router-link to="/cart" class="cart-icon">
-          <img height="30px" src="@/assets/carticon.png" alt="Cart" />
-          <span class="cart-count">{{ cartCount }}</span>
-        </router-link>
+      <div class="actions">
+        <div class="search-container">
+          <input v-model="searchQuery" type="text" placeholder="Search..." />
+          <button @click="performSearch">Search</button>
+        </div>
+        <div class="cart-container">
+          <router-link to="/cart" class="cart-icon">
+            <img height="30px" src="@/assets/carticon.png" alt="Cart" />
+            <span class="cart-count">{{ cartCount }}</span>
+          </router-link>
+        </div>
       </div>
     </div>
   </header>
@@ -29,9 +35,19 @@ import { cartStore } from '../cartStore';
 
 export default {
   name: 'TheHeader',
+  data() {
+    return {
+      searchQuery: '',
+    };
+  },
   computed: {
     cartCount() {
       return cartStore.cartCount;
+    },
+  },
+  methods: {
+    performSearch() {
+      this.$emit('search', this.searchQuery);
     },
   },
 };
@@ -90,6 +106,63 @@ nav a:hover {
   border-bottom: 2px solid #ffd700;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-right: 2rem;
+}
+
+.search-container input {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+}
+
+.search-container button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #ffd700;
+  color: #333;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.search-container button:hover {
+  background-color: #ffc107;
+}
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-right: 2rem;
+}
+
+.search-container input {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+}
+
+.search-container button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #ffd700;
+  color: #333;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.search-container button:hover {
+  background-color: #ffc107;
+}
 .cart-container {
   display: flex;
   align-items: center;
@@ -129,6 +202,10 @@ nav a:hover {
 
   nav li {
     margin: 0.5rem 0;
+  }
+
+  .search-container {
+    margin: 1rem 0;
   }
 }
 </style>
