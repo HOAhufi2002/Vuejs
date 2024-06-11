@@ -4,19 +4,23 @@
       <div class="modal-wrapper">
         <div class="modal-container">
           <h3>Edit Product</h3>
-          <form @submit.prevent="updateItem(apiURL)">
-            <input v-model="editItem.name" placeholder="Name" />
-            <input v-model="editItem.description" placeholder="Description" />
-            <input v-model="editItem.price" type="number" placeholder="Price" />
-            <input v-model="editItem.image" placeholder="Image URL" />
+          <form @submit.prevent="updateItem">
+            <input v-model="editItem.name" placeholder="Name" required />
+            <input v-model="editItem.description" placeholder="Description" required />
+            <input v-model="editItem.price" type="number" placeholder="Price" required />
+            <input type="file" @change="onFileChange" />
+            <div v-if="editItem.image" class="image-preview">
+              <img :src="imageUrl" alt="Product Image" />
+            </div>
             <label style="display: flex; align-items: center">
-              On Sale
+              <p>On Sale</p>
               <input
                 v-model="editItem.onSale"
                 type="checkbox"
-                style="margin-left: 10px; margin-top: 12px"
+                style="margin-left: -220px; margin-top: 12px"
               />
             </label>
+
             <div class="modal-buttons">
               <button type="submit">Update Product</button>
               <button type="button" @click="$emit('close')">Cancel</button>
@@ -30,25 +34,57 @@
 
 <script>
 import axios from 'axios';
+
 export default {
   name: 'EditProduct',
   props: ['show', 'apiURL', 'product'],
   data() {
     return {
       editItem: { ...this.product },
+      file: null,
     };
   },
+  computed: {
+    imageUrl() {
+      if (this.file) {
+        return URL.createObjectURL(this.file);
+      } else if (this.editItem.image) {
+        return `http://localhost:8081/images/${this.editItem.image}`;
+      }
+      return '';
+    },
+  },
   methods: {
-    async updateItem(url) {
+    onFileChange(event) {
+      this.file = event.target.files[0];
+      this.editItem.image = this.file;
+    },
+    async uploadFile() {
+      if (!this.file) return null;
+      const formData = new FormData();
+      formData.append('file', this.file);
       try {
-        console.log('Updating item:', this.editItem); // Kiểm tra dữ liệu đang được gửi
-        const response = await axios.put(`${url}/update${this.editItem.id}`, this.editItem);
-        console.log('Server response:', response.data); // Xem phản hồi từ server
-        this.editItem = null;
-        this.showEditProductModal = false;
+        const response = await axios.post(`${this.apiURL}/upload`, formData);
+        return response.data.fileName;
+      } catch (error) {
+        console.error('File upload failed:', error);
+        throw error;
+      }
+    },
+    async updateItem() {
+      try {
+        if (this.file) {
+          this.editItem.image = await this.uploadFile();
+        }
+        const response = await axios.put(`${this.apiURL}/update${this.editItem.id}`, this.editItem);
+        console.log('Server response:', response.data);
+
         alert('Product updated successfully!');
+        this.$emit('close');
+        this.$emit('refresh');
       } catch (err) {
-        console.error('Update failed:', err); // Log lỗi nếu có
+        console.error('Update failed:', err);
+        alert('Product update failed!');
       }
     },
   },
@@ -61,6 +97,20 @@ export default {
 </script>
 
 <style scoped>
+.image-preview {
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+}
+.image-preview img {
+  max-width: 40%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .modal-mask {
   position: fixed;
   z-index: 9998;

@@ -1,10 +1,9 @@
 <template>
-  <div class="search-bar">
-    <input type="text" v-model.trim="searchQuery" placeholder="Search for products..." />
-  </div>
-
-  <button class="add-product-btn" @click="showAddProductModal = true">Add New Product</button>
-
+  <TheHeader
+    :message="message"
+    :searchQuery="searchQuery"
+    @update-search-query="updateSearchQuery"
+  />
   <AddProduct
     :show="showAddProductModal"
     :apiURL="apiURL"
@@ -34,7 +33,7 @@
         <div class="image-container">
           <div v-if="product.name.includes('iPhone 12')" class="hot-label">Hot</div>
           <img
-            :src="`/images/${product.image}`"
+            :src="`http://localhost:8081//images/${product.image}`"
             :alt="product.name"
             class="product-image"
             ref="productImages"
@@ -88,14 +87,18 @@
       </div>
     </div>
   </transition-group>
+  <button class="add-product-btn" @click="showAddProductModal = true">Add New Product</button>
 </template>
 
 <script>
 import { gsap } from 'gsap';
-import { fetchDataMixin } from '@/mixins/fetchDataMixin';
+import { fetchDataMixin } from '../mixins/fetchDataMixin';
 import AddProduct from '@/components/SanPhamComponent/AddProduct.vue';
 import EditProduct from '@/components/SanPhamComponent/EditProduct.vue';
 import DeleteProduct from '@/components/SanPhamComponent/DeleteProduct.vue';
+import TheHeader from '@/components/LayoutComponent/TheHeader.vue';
+import { cartStore } from '../router/cartStore';
+
 const baseURL = 'https://localhost:44336/api/';
 export default {
   name: 'SanPhamView',
@@ -104,6 +107,7 @@ export default {
     AddProduct,
     EditProduct,
     DeleteProduct,
+    TheHeader,
   },
   data() {
     return {
@@ -147,15 +151,18 @@ export default {
     updateSearchQuery(query) {
       this.searchQuery = query;
     },
+    // Method to handle the buy now action
     buyNow(product) {
       console.log(`Buying ${product.name}`);
+      // Show the notification with product name
       this.purchasedProductName = product.name;
       this.showNotification = true;
       this.cart.push(product);
     },
+    // Method to handle adding product to cart
     addToCart(product) {
-      console.log(`Adding ${product.name} to cart`);
-      this.cart.push(product);
+      console.log('Adding product to cart:', product);
+      cartStore.addToCart(product);
     },
     closeNotification() {
       this.showNotification = false;
@@ -216,6 +223,7 @@ export default {
     setEditItem(product) {
       this.editItem = { ...product };
       this.showEditProductModal = true;
+      console.log(this.editItem);
     },
     confirmDeleteItem(product) {
       this.productToDelete = product;
@@ -265,8 +273,8 @@ export default {
 .product-image {
   display: block;
   margin: 0 auto;
-  width: 65%;
-  height: auto;
+  width: 182.51px;
+  height: 182.51px;
   transition: transform 0.3s, opacity 0.3s;
 }
 

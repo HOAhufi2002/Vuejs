@@ -1,86 +1,82 @@
 <template>
-  <center>
-    <h1>{{ message }}</h1>
-  </center>
+  <div class="app-container">
+    <!-- Include the Header component -->
+    <TheHeader
+      :message="message"
+      :searchQuery="searchQuery"
+      @update-search-query="updateSearchQuery"
+    />
 
-  <div class="search-bar">
-    <!-- Input field for search keyword with v-model modifier -->
-    <input type="text" v-model.trim="searchQuery" placeholder="Search for products..." />
+    <transition-group name="list" tag="div" class="product-page">
+      <div v-for="(product, index) in filteredProducts" :key="index" class="card-column">
+        <div
+          ref="cards"
+          class="card"
+          @mouseenter="zoomIn"
+          @mouseleave="zoomOut"
+          :style="productStyles(product)"
+        >
+          <div class="image-container">
+            <div v-if="product.name.includes('iPhone 12')" class="hot-label">Hot</div>
+            <img :src="product.image" :alt="product.name" class="product-image" />
+          </div>
+          <div class="container">
+            <h4>
+              <b>{{ product.name }}</b>
+            </h4>
+            <p class="price">{{ product.price }}</p>
+            <p class="description" v-html="product.description"></p>
+            <center>
+              <div class="buttons">
+                <button @click="buyNow(product)">Mua ngay</button>
+              </div>
+            </center>
+          </div>
+        </div>
+      </div>
+      <div v-if="showNotification" class="notification">
+        <h2 class="notification-title">Purchase Confirmation</h2>
+        <p class="notification-text">
+          You have selected: <strong>{{ purchasedProductName }}</strong>
+        </p>
+        <div class="notification-inputs">
+          <input
+            type="text"
+            v-model.trim="customerName"
+            placeholder="Enter your name"
+            @keydown.enter.prevent="confirmPurchase"
+            class="notification-input"
+          />
+          <input
+            type="text"
+            v-model.number="customerPhone"
+            placeholder="Enter your phone number"
+            @keydown.enter.prevent="confirmPurchase"
+            class="notification-input"
+          />
+        </div>
+        <div v-if="cart.length" class="total-price">
+          <h2>Total Price: {{ totalPrice }}</h2>
+        </div>
+        <div class="notification-buttons">
+          <button @click="confirmPurchase" class="notification-button">Confirm</button>
+          <button @click="closeNotification" class="notification-button">Close</button>
+        </div>
+      </div>
+    </transition-group>
   </div>
-
-  <transition-group name="list" tag="div" class="product-page">
-    <div v-for="(product, index) in filteredProducts" :key="index" class="card-column">
-      <div
-        ref="cards"
-        class="card"
-        @mouseenter="zoomIn"
-        @mouseleave="zoomOut"
-        :style="productStyles(product)"
-      >
-        <div class="image-container">
-          <!-- Add hot label for iPhone 12 -->
-          <div v-if="product.name.includes('iPhone 12')" class="hot-label">Hot</div>
-          <img :src="product.image" :alt="product.name" class="product-image" />
-        </div>
-        <div class="container">
-          <h4>
-            <b>{{ product.name }}</b>
-          </h4>
-          <p class="price">{{ product.price }}</p>
-          <p class="description" v-html="product.description"></p>
-          <center>
-            <div class="buttons">
-              <!-- Listening to the click event for buyNow method -->
-              <button @click="buyNow(product)">Mua ngay</button>
-              <!-- Listening to the click event for addToCart method -->
-              <button @click="addToCart(product)">Thêm vào giỏ hàng</button>
-            </div>
-          </center>
-        </div>
-      </div>
-    </div>
-    <div v-if="showNotification" class="notification">
-      <h2 class="notification-title">Purchase Confirmation</h2>
-      <p class="notification-text">
-        You have selected: <strong>{{ purchasedProductName }}</strong>
-      </p>
-      <div class="notification-inputs">
-        <input
-          type="text"
-          v-model.trim="customerName"
-          placeholder="Enter your name"
-          @keydown.enter.prevent="confirmPurchase"
-          class="notification-input"
-        />
-        <input
-          type="text"
-          v-model.number="customerPhone"
-          placeholder="Enter your phone number"
-          @keydown.enter.prevent="confirmPurchase"
-          class="notification-input"
-        />
-      </div>
-      <div v-if="cart.length" class="total-price">
-        <h2>Total Price: {{ totalPrice }}</h2>
-      </div>
-      <div class="notification-buttons">
-        <button @click="confirmPurchase" class="notification-button">Confirm</button>
-        <button @click="closeNotification" class="notification-button">Close</button>
-      </div>
-    </div>
-  </transition-group>
 </template>
 
 <script>
 import { gsap } from 'gsap';
-import iphone12mini from '@/assets/iphone12mini.jpg';
-import iphone12 from '@/assets/iphone12.jpg';
-import iphone13mini from '@/assets/iphone12mini.jpg';
-import iphone14pro from '@/assets/iphone14promax.jpg';
-import { cartStore } from '../../cartStore';
+import TheHeader from '@/components/LayoutComponent/TheHeader.vue';
+import { cartStore } from '../../router/cartStore';
 
 export default {
   name: 'ProductPage',
+  components: {
+    TheHeader,
+  },
   data() {
     return {
       message: 'List of iPhones',
@@ -92,7 +88,7 @@ export default {
           price: 699,
           description:
             'Compact and powerful, featuring <strong>A14 Bionic chip</strong> and dual-camera system.',
-          image: iphone12mini,
+          image: 'http://localhost:8081/images/iphone12mini.jpg',
           onSale: true,
         },
         {
@@ -100,7 +96,7 @@ export default {
           price: 799,
           description:
             'Powerful performance with <strong>A14 Bionic chip</strong> and Super Retina XDR display.',
-          image: iphone12,
+          image: 'http://localhost:8081/images/iphone12.jpg',
           onSale: false,
         },
         {
@@ -108,14 +104,14 @@ export default {
           price: 699,
           description:
             'Compact and powerful, featuring <strong>A15 Bionic chip</strong> and dual-camera system.',
-          image: iphone13mini,
+          image: 'http://localhost:8081/images/iphone12mini.jpg',
           onSale: false,
         },
         {
           name: 'iPhone 14 Pro',
           price: 999,
           description: 'Pro camera system with <strong>LiDAR scanner</strong> and A16 Bionic chip.',
-          image: iphone14pro,
+          image: 'http://localhost:8081/images/iphone14promax.jpg',
           onSale: false,
         },
       ],
@@ -141,6 +137,9 @@ export default {
     },
   },
   methods: {
+    updateSearchQuery(newQuery) {
+      this.searchQuery = newQuery;
+    },
     // Method to handle the buy now action
     buyNow(product) {
       console.log(`Buying ${product.name}`);

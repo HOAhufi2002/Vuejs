@@ -32,60 +32,49 @@ export const fetchDataMixin = {
         this.loading = false;
       }
     },
-    async addItem(url) {
-      this.loading = true;
+    async deleteConfirmedItem() {
+      if (!this.product || !this.product.id) {
+        return;
+      }
       try {
-        await axios.post(`${url}/add`, this.newItem);
-        await this.fetchData(url);
-        this.newItem = {
-          name: '',
-          description: '',
-          price: 0,
-          image: '',
-          onSale: false,
-        };
-        this.showAddProductModal = false;
-
-        this.successMessage = 'Product added successfully!';
-        this.showSuccessMessage = true;
-        this.$nextTick(() => {
-          setTimeout(() => {
-            this.showSuccessMessage = false;
-          }, 3000);
-        });
-        alert('Product updated successfully!');
+        await axios.delete(`${this.apiURL}/${this.product.id}`);
+        this.$emit('refresh');
+        this.$emit('close');
+        alert('Product deleted successfully!');
       } catch (err) {
-        this.error = err;
-      } finally {
-        this.loading = false;
+        console.error('Error deleting product:', err);
+        alert('Error deleting product.');
       }
     },
-
-    async deleteItem(url, id) {
-      this.loading = true;
+    async uploadFile() {
+      if (!this.file) return null;
+      const formData = new FormData();
+      formData.append('file', this.file);
       try {
-        await axios.delete(`${url}/${id}`);
-        await this.fetchData(url);
-      } catch (err) {
-        this.error = err;
-      } finally {
-        this.loading = false;
+        const response = await axios.post(`${this.apiURL}/upload`, formData);
+        return response.data.fileName;
+      } catch (error) {
+        console.error('File upload failed:', error);
+        throw error;
       }
     },
-    async updateItem(url) {
+    async addItem() {
       try {
-        console.log('Updating item:', this.editItem); // Kiểm tra dữ liệu đang được gửi
-        const response = await axios.put(`${url}/update${this.editItem.id}`, this.editItem);
-        console.log('Server response:', response.data); // Xem phản hồi từ server
-        await this.fetchData(url);
-        this.editItem = null;
-        this.showEditProductModal = false;
-        alert('Product updated successfully!');
+        if (this.file) {
+          this.newItem.image = await this.uploadFile();
+        }
+        await axios.post(`${this.apiURL}/add`, this.newItem);
+        this.resetForm();
+        this.$emit('refresh');
+        this.$emit('close');
+        alert('Product added successfully!');
       } catch (err) {
-        console.error('Update failed:', err); // Log lỗi nếu có
+        console.error('Error adding product:', err);
+        alert('Failed to add product!');
       }
     },
   },
+
   created() {
     this.fetchData(this.apiURL);
   },

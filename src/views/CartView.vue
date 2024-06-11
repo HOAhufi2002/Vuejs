@@ -2,7 +2,7 @@
   <div id="app" class="cart-container">
     <section>
       <div class="yourCart top-content">
-        <a href="http://localhost:8081/products" class="buymore">Tiếp tục mua hàng</a>
+        <a href="http://localhost:8081/sanpham" class="buymore">Tiếp tục mua hàng</a>
         <span>Giỏ hàng của bạn</span>
       </div>
       <div class="middleCart">
@@ -10,7 +10,12 @@
           <li v-for="item in cartStore.items" :key="item.name" class="product-item">
             <div class="imgsp">
               <a :href="item.url" target="_blank">
-                <img :src="item.image" :alt="item.name" loading="lazy" class="product-image" />
+                <img
+                  :src="`http://localhost:8081/images/${item.image}`"
+                  :alt="item.name"
+                  loading="lazy"
+                  class="product-image"
+                />
               </a>
               <div>
                 <button
@@ -151,7 +156,7 @@
 
 <script>
 import { ref, computed } from 'vue';
-import { cartStore } from '../cartStore';
+import { cartStore } from '../router/cartStore';
 
 export default {
   name: 'CartView',
@@ -189,6 +194,7 @@ export default {
       deliveryMethod.value = '';
       showCustomerForm.value = false;
       showSuccessMessage.value = true;
+      alert(`Thank you! Your order will be processed soon.`);
     };
 
     return {

@@ -16,27 +16,14 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { fetchDataMixin } from '../../mixins/fetchDataMixin';
 
 export default {
   name: 'DeleteProduct',
+  mixins: [fetchDataMixin],
+
   props: ['show', 'apiURL', 'product'],
-  methods: {
-    async deleteConfirmedItem() {
-      if (!this.product || !this.product.id) {
-        return;
-      }
-      try {
-        await axios.delete(`${this.apiURL}/${this.product.id}`);
-        this.$emit('refresh');
-        this.$emit('close');
-        alert('Product deleted successfully!');
-      } catch (err) {
-        console.error('Error deleting product:', err);
-        alert('Error deleting product.');
-      }
-    },
-  },
+  methods: {},
 };
 </script>
 
